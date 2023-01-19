@@ -1,14 +1,9 @@
-// built-in module (현재 존재하지 않음)
-
-// third-party module
-require('dotenv').config(); // 환경변수 사용
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const { DataSource } = require('typeorm');
-
-// custom module (현재 존재하지 않음)
 
 const appDataSource = new DataSource({
   type: process.env.DB_CONNECTION,
