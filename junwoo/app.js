@@ -1,11 +1,9 @@
-const http = require("http");
+// third-party module
+require("dotenv").config();
+
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-
-const dotenv = require("dotenv");
-dotenv.config();
-
 const { DataSource } = require("typeorm");
 
 const appDataSource = new DataSource({
@@ -31,11 +29,10 @@ app.get("/ping", cors(), (req, res) => {
   res.json({ message: "pong" });
 });
 
-const server = http.createServer(app);
 const PORT = process.env.PORT;
 
 const start = async () => {
-  server.listen(PORT, () => console.log(`server is listening on ${PORT}`));
+  app.listen(PORT, () => console.log(`server is listening on ${PORT}`));
 };
 
 start();
