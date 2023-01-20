@@ -35,19 +35,34 @@ app.get("/ping", (req, res) => {
 });
 
 app.post("/user/signup", async (req, res) => {
-  const { id, name, password, email, phoneNumber } = req.body;
+  const { name, password, email, phoneNumber } = req.body;
   await appDataSource.query(
     `INSERT INTO users(
-    id,
     name,
     password,
     email,
     phoneNumber
-    ) VALUES (?, ?, ?, ?, ?);
+    ) VALUES (?, ?, ?, ?);
   `,
-    [id, name, password, email, phoneNumber]
+    [name, password, email, phoneNumber]
   );
   res.status(201).json({ message: "userCreated" });
+});
+
+app.post("/post/posting", async (req, res) => {
+  const { title, content, post_image, user_id } = req.body;
+  console.log(title, content, post_image, user_id);
+  await appDataSource.query(
+    `INSERT INTO posts(
+      title,
+      content,
+      post_image,
+      user_id
+    ) VALUES (?, ?, ?, ?);
+    `,
+    [title, content, post_image, user_id]
+  );
+  res.status(201).json({ message: "postCreated" });
 });
 
 const PORT = process.env.PORT;
