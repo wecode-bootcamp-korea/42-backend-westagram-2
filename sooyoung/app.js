@@ -48,6 +48,23 @@ app.post("/signup", async (req, res) => {
   res.status(201).json({ message : "userCreated"})
 })
 
+// 게시물 등록
+app.post("/post/post-write", async (req, res) => {
+  const { postImage, content, userId } = req.body;
+
+  await appDataSource.query(
+    `INSERT INTO posts (
+      post_image,
+      content,
+      user_id
+    ) VALUES (?, ?, ?);
+    `,
+    [postImage, content, userId]
+  );
+
+  res.status(201).json({ message : "postCreated" });
+});
+
 const PORT = process.env.PORT;
 
 const start = async () => {
