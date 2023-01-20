@@ -1,0 +1,7 @@
+-- migrate:up
+ALTER TABLE users 
+MODIFY COLUMN password VARCHAR(200) NOT NULL,
+MODIFY COLUMN email VARCHAR(100) UNIQUE NULL
+
+-- migrate:down
+DROP TABLE users;
