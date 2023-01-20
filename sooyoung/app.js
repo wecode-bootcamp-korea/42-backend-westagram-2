@@ -33,16 +33,17 @@ app.get("/ping", (req, res) => {
 
 // 유저 회원가입 
 app.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body
+  const { username, email, profileImage , password } = req.body
 
   await appDataSource.query(
     `INSERT INTO users (
       username, 
       email, 
+      profile_image,
       password
-    ) VALUES (?, ?, ?);
+    ) VALUES (?, ?, ?, ?);
     `,
-    [username, email, password]
+    [username, email, profileImage, password]
   );
 
   res.status(201).json({ message : "userCreated"})
