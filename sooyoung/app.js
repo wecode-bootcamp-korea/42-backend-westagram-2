@@ -65,6 +65,50 @@ app.post("/post/post-write", async (req, res) => {
   res.status(201).json({ message : "postCreated" });
 });
 
+// 전체 게시물 조회
+
+app.get("/post/lists", async (req, res) => {
+
+  const postList = await appDataSource.query(
+    `SELECT 
+        users.id AS userId, 
+        users.profile_image AS userProfileImage,
+        posts.id AS postingId,
+        posts.post_image AS postingImageUrl,
+        posts.content AS postingContent
+      FROM posts
+      INNER JOIN users ON users.id = posts.user_id;
+    `
+  );
+
+  res.status(200).json({ data : postList })
+});
+
+// 유저의 게시물 조회
+app.get("/user/:userId/posts", async (req, res) => {
+
+  const { userId } = req.params;
+  const userPosts = await appDataSource.query(
+    `SELECT 
+        users.id AS userId, 
+        users.profile_image AS userProfileImage,
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            "postingId", posts.id,
+            "postingImageUrl", posts.post_image,
+            "postingContent", posts.content
+          ) 
+        ) AS postings
+        FROM posts
+      INNER JOIN users ON users.id = posts.user_id
+      WHERE users.id = ?
+      GROUP BY users.id;
+    `, [userId]
+  );
+
+  res.status(200).json({ data : userPosts })
+});
+
 const PORT = process.env.PORT;
 
 const start = async () => {
