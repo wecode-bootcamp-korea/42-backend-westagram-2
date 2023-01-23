@@ -11,13 +11,12 @@ const appDataSource = new DataSource({
   port: process.env.DB_PORT,
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
+  database: process.env.DB_DATABASE,
 });
 
-appDataSource.initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!")
-  })
+appDataSource.initialize().then(() => {
+  console.log('Data Source has been initialized!');
+});
 
 const app = express();
 
@@ -25,15 +24,14 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('short'));
 
-
-// health check 
-app.get("/ping", (req, res) => {
-  res.json({ message : "pong" })
+// health check
+app.get('/ping', (req, res) => {
+  res.json({ message: 'pong' });
 });
 
-// 유저 회원가입 
-app.post("/signup", async (req, res) => {
-  const { username, email, profileImage , password } = req.body
+// 유저 회원가입
+app.post('/signup', async (req, res) => {
+  const { username, email, profileImage, password } = req.body;
 
   await appDataSource.query(
     `INSERT INTO users (
@@ -46,11 +44,11 @@ app.post("/signup", async (req, res) => {
     [username, email, profileImage, password]
   );
 
-  res.status(201).json({ message : "userCreated"})
-})
+  res.status(201).json({ message: 'userCreated' });
+});
 
 // 게시물 등록
-app.post("/post/post-write", async (req, res) => {
+app.post('/post/post-write', async (req, res) => {
   const { postImage, content, userId } = req.body;
 
   await appDataSource.query(
@@ -63,13 +61,12 @@ app.post("/post/post-write", async (req, res) => {
     [postImage, content, userId]
   );
 
-  res.status(201).json({ message : "postCreated" });
+  res.status(201).json({ message: 'postCreated' });
 });
 
 // 전체 게시물 조회
 
-app.get("/post/lists", async (req, res) => {
-
+app.get('/post/lists', async (req, res) => {
   const postList = await appDataSource.query(
     `SELECT 
         users.id AS userId, 
@@ -82,12 +79,11 @@ app.get("/post/lists", async (req, res) => {
     `
   );
 
-  res.status(200).json({ data : postList })
+  res.status(200).json({ data: postList });
 });
 
 // 유저의 게시물 조회
-app.get("/user/:userId/posts", async (req, res) => {
-
+app.get('/user/:userId/posts', async (req, res) => {
   const { userId } = req.params;
   const userPosts = await appDataSource.query(
     `SELECT 
@@ -104,27 +100,28 @@ app.get("/user/:userId/posts", async (req, res) => {
       INNER JOIN users ON users.id = posts.user_id
       WHERE users.id = ?
       GROUP BY users.id;
-    `, [userId]
+    `,
+    [userId]
   );
 
-  res.status(200).json({ data : userPosts })
+  res.status(200).json({ data: userPosts });
 });
 
 // 게시물 수정
-app.patch("/post/:postId/edit", async (req, res) => {
+app.patch('/post/:postId/edit', async (req, res) => {
   const { postId } = req.params;
   const { content } = req.body;
 
   await appDataSource.query(
-      `UPDATE posts
+    `UPDATE posts
         SET content = ?
         WHERE id = ?;
       `,
-      [content, postId]
-    )
+    [content, postId]
+  );
 
   const updatedPost = await appDataSource.query(
-      `SELECT 
+    `SELECT 
         users.id AS userId,
         users.username AS username,
         posts.id AS postingId,
@@ -134,16 +131,16 @@ app.patch("/post/:postId/edit", async (req, res) => {
       INNER JOIN users ON users.id = posts.user_id
       WHERE posts.id = ?;
       `,
-      [postId]
-  )
+    [postId]
+  );
 
-  res.status(200).json({ data : updatedPost })
-})
+  res.status(200).json({ data: updatedPost });
+});
 
 // 게시물 삭제
-app.delete("/post/:postId/delete", async (req, res) => {
+app.delete('/post/:postId/delete', async (req, res) => {
   const { postId } = req.params;
-  
+
   await appDataSource.query(
     `DELETE FROM posts
     WHERE id = ?;
@@ -151,11 +148,11 @@ app.delete("/post/:postId/delete", async (req, res) => {
     [postId]
   );
 
-  res.status(200).json({ message : "postingDeleted" })
-})
+  res.status(200).json({ message: 'postingDeleted' });
+});
 
 // 게시물 좋아요 기능
-app.post("/post/:postId/like", async (req, res) => {
+app.post('/post/:postId/like', async (req, res) => {
   const { postId } = req.params;
   const { userId } = req.body;
 
@@ -169,13 +166,13 @@ app.post("/post/:postId/like", async (req, res) => {
     [userId, postId]
   );
 
-  res.status(201).json({ message : "likeCreated" })
-})
+  res.status(201).json({ message: 'likeCreated' });
+});
 
 const PORT = process.env.PORT;
 
 const start = async () => {
   app.listen(PORT, () => console.log(`server is listening on ${PORT}`));
-}
+};
 
 start();
