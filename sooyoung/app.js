@@ -154,6 +154,24 @@ app.delete("/post/:postId/delete", async (req, res) => {
   res.status(200).json({ message : "postingDeleted" })
 })
 
+// 게시물 좋아요 기능
+app.post("/post/:postId/like", async (req, res) => {
+  const { postId } = req.params;
+  const { userId } = req.body;
+
+  await appDataSource.query(
+    `INSERT INTO likes (
+        user_id,
+        post_id
+      )
+      VALUES ( ?, ? );
+    `,
+    [userId, postId]
+  );
+
+  res.status(201).json({ message : "likeCreated" })
+})
+
 const PORT = process.env.PORT;
 
 const start = async () => {
