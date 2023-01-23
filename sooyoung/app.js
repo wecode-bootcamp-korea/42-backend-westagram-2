@@ -110,12 +110,12 @@ app.get("/user/:userId/posts", async (req, res) => {
   res.status(200).json({ data : userPosts })
 });
 
-  // 게시물 수정
-  app.patch("/post/:postId/edit", async (req, res) => {
-    const { postId } = req.params;
-    const { content } = req.body;
+// 게시물 수정
+app.patch("/post/:postId/edit", async (req, res) => {
+  const { postId } = req.params;
+  const { content } = req.body;
 
-    await appDataSource.query(
+  await appDataSource.query(
       `UPDATE posts
         SET content = ?
         WHERE id = ?;
@@ -123,7 +123,7 @@ app.get("/user/:userId/posts", async (req, res) => {
       [content, postId]
     )
 
-    const updatedPost = await appDataSource.query(
+  const updatedPost = await appDataSource.query(
       `SELECT 
         users.id AS userId,
         users.username AS username,
@@ -135,10 +135,24 @@ app.get("/user/:userId/posts", async (req, res) => {
       WHERE posts.id = ?;
       `,
       [postId]
-    )
+  )
 
   res.status(200).json({ data : updatedPost })
-  })
+})
+
+// 게시물 삭제
+app.delete("/post/:postId/delete", async (req, res) => {
+  const { postId } = req.params;
+  
+  await appDataSource.query(
+    `DELETE FROM posts
+    WHERE id = ?;
+    `,
+    [postId]
+  );
+
+  res.status(200).json({ message : "postingDeleted" })
+})
 
 const PORT = process.env.PORT;
 
