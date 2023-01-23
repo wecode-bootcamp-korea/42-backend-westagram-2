@@ -110,6 +110,36 @@ app.get("/user/:userId/posts", async (req, res) => {
   res.status(200).json({ data : userPosts })
 });
 
+  // 게시물 수정
+  app.patch("/post/:postId/edit", async (req, res) => {
+    const { postId } = req.params;
+    const { content } = req.body;
+
+    await appDataSource.query(
+      `UPDATE posts
+        SET content = ?
+        WHERE id = ?;
+      `,
+      [content, postId]
+    )
+
+    const updatedPost = await appDataSource.query(
+      `SELECT 
+        users.id AS userId,
+        users.username AS username,
+        posts.id AS postingId,
+        posts.title AS postingTitle,
+        posts.content AS postingContent
+      FROM posts
+      INNER JOIN users ON users.id = posts.user_id
+      WHERE posts.id = ?;
+      `,
+      [postId]
+    )
+
+  res.status(200).json({ data : updatedPost })
+  })
+
 const PORT = process.env.PORT;
 
 const start = async () => {
