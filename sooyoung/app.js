@@ -48,7 +48,7 @@ app.post('/signup', async (req, res) => {
 });
 
 // 게시물 등록
-app.post('/post/post-write', async (req, res) => {
+app.post('/post', async (req, res) => {
   const { postImage, content, userId } = req.body;
 
   await appDataSource.query(
@@ -108,7 +108,7 @@ app.get('/user/:userId/posts', async (req, res) => {
 });
 
 // 게시물 수정
-app.patch('/post/:postId/edit', async (req, res) => {
+app.patch('/post/:postId', async (req, res) => {
   const { postId } = req.params;
   const { content } = req.body;
 
@@ -138,7 +138,7 @@ app.patch('/post/:postId/edit', async (req, res) => {
 });
 
 // 게시물 삭제
-app.delete('/post/:postId/delete', async (req, res) => {
+app.delete('/post/:postId', async (req, res) => {
   const { postId } = req.params;
 
   await appDataSource.query(
