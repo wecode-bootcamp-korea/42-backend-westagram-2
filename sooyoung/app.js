@@ -85,26 +85,29 @@ app.get('/post/lists', async (req, res) => {
 // 유저의 게시물 조회
 app.get('/user/:userId/posts', async (req, res) => {
   const { userId } = req.params;
-  const userPosts = await appDataSource.query(
+  const userWithPost = await appDataSource.query(
     `SELECT 
-        users.id AS userId, 
-        users.profile_image AS userProfileImage,
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            "postingId", posts.id,
-            "postingImageUrl", posts.post_image,
-            "postingContent", posts.content
-          ) 
-        ) AS postings
-        FROM posts
-      INNER JOIN users ON users.id = posts.user_id
-      WHERE users.id = ?
-      GROUP BY users.id;
+        id AS userId, 
+        profile_image AS userProfileImage
+      FROM users
+      WHERE id = ?;
     `,
     [userId]
   );
 
-  res.status(200).json({ data: userPosts });
+  const postsOfUser = await appDataSource.query(
+    `SELECT
+        id AS postingId,
+        post_image AS postingImageUrl,
+        content AS postingContent
+      FROM posts
+      WHERE user_id = ?;
+    `,
+    [userId]
+  );
+
+  userWithPost[0].posting = postsOfUser;
+  res.status(200).json({ data: userWithPost[0] });
 });
 
 // 게시물 수정
