@@ -54,7 +54,6 @@ app.post("/user/signup", async (req, res) => {
 // 게시물 등록
 app.post("/posting", async (req, res) => {
   const { title, content, post_image, user_id } = req.body;
-  console.log(title, content, post_image, user_id);
   await appDataSource.query(
     `INSERT INTO posts(
       title,
@@ -70,7 +69,7 @@ app.post("/posting", async (req, res) => {
 
 // 전체 게시글 조회
 app.get("/posts/list", async (req, res) => {
-  await appDataSource.query(
+  const postList = await appDataSource.query(
     `SELECT
     u.id AS usersId,
     u.profileImage AS userProfileImage,
@@ -78,17 +77,15 @@ app.get("/posts/list", async (req, res) => {
     p.post_image AS postingImageUrl,
     p.content AS postingContent
     FROM posts p INNER JOIN users u ON p.user_id = u.id; 
-    `,
-    (err, rows) => {
-      res.status(200).json({ data: rows });
-    }
+    `
   );
+  res.status(200).json({ data: postList });
 });
 
 // 유저의 게시글 조회
 app.get("/posts/list/:userId", async (req, res) => {
   const { userId } = req.params;
-  await appDataSource.query(
+  const userlist = await appDataSource.query(
     `SELECT
     u.id AS userId,
     u.profileImage AS userProfileImage,
@@ -98,11 +95,9 @@ app.get("/posts/list/:userId", async (req, res) => {
       AS postings
     FROM users u
     INNER JOIN posts p
-    ON u.id=p.user_id WHERE u.id= ${userId};`,
-    (err, rows) => {
-      res.status(200).json({ data: rows });
-    }
+    ON u.id=p.user_id WHERE u.id= ${userId};`
   );
+  res.status(200).json({ data: userlist });
 });
 
 // 게시글 수정
