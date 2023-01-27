@@ -33,30 +33,33 @@ app.get("/ping", cors(), (req, res) => {
 app.post("/users/signup", async (req, res) => {
   const { name, email, age } = req.body;
 
-  const result = await appDataSource.query(
+  await appDataSource.query(
     `INSERT INTO users(
       name,
       email,
       age
-      ) VALUES (?,?,?);
-      `,
+      ) VALUES (?,
+        ?,
+        ?);`,
     [name, email, age]
   );
-  console.log(result);
   res.status(201).json({ message: "userCreated" });
 });
 
-app.post("/posts/create", async (req, res) => {
+app.post("/posts", async (req, res) => {
   const { title, content, image, user_id } = req.body;
 
   await appDataSource.query(
     `INSERT INTO posts(
-  title,
-  content,
-  image_url,
-  user_id
-  ) VALUES(?,?,?,?);
-  `,
+      title,
+      content,
+      image_url,
+      user_id
+    ) VALUES(
+      ?,
+      ?,
+      ?,
+      ?);`,
     [title, content, image, user_id]
   );
 
