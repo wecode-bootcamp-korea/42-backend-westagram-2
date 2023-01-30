@@ -1,26 +1,7 @@
-const { DataSource } = require("typeorm");
-
-const appDataSource = new DataSource({
-  type: process.env.DB_CONNECTION,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
-
-appDataSource
-  .initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.error("Error during Data Source initialization", err);
-    appDataSource.destroy();
-  });
+const { appDataSource } = require("./appDataSource");
 
 // 유저회원가입
-const createUser = async (name, password, email, phoneNumber, profileImage) => {
+const signUp = async (name, password, email, phoneNumber, profileImage) => {
   try {
     return await appDataSource.query(
       `INSERT INTO users(
@@ -41,5 +22,5 @@ const createUser = async (name, password, email, phoneNumber, profileImage) => {
 };
 
 module.exports = {
-  createUser,
+  signUp,
 };

@@ -1,26 +1,7 @@
-const { DataSource } = require("typeorm");
-
-const appDataSource = new DataSource({
-  type: process.env.DB_CONNECTION,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-});
-
-appDataSource
-  .initialize()
-  .then(() => {
-    console.log("Data Source has been initialized!");
-  })
-  .catch((err) => {
-    console.error("Error during Data Source initialization", err);
-    appDataSource.destroy();
-  });
+const { appDataSource } = require("./appDataSource");
 
 //게시글 등록
-const posting = async (title, content, post_image, user_id) => {
+const createPost = async (title, content, post_image, user_id) => {
   return await appDataSource.query(
     `INSERT INTO posts(
       title,
@@ -34,7 +15,7 @@ const posting = async (title, content, post_image, user_id) => {
 };
 
 // 게시글 조회
-const postAll = async () => {
+const getPosts = async () => {
   return await appDataSource.query(
     `SELECT
     u.id AS usersId,
@@ -48,7 +29,7 @@ const postAll = async () => {
 };
 
 // 유저 게시글 조회
-const postUser = async (userId) => {
+const getPostByUserId = async (userId) => {
   return await appDataSource.query(
     `SELECT
     u.id AS userId,
@@ -64,7 +45,7 @@ const postUser = async (userId) => {
 };
 
 // 게시글 수정
-const postUpdate = async (postId, content) => {
+const updatePost = async (postId, content) => {
   await appDataSource.query(
     `UPDATE
     posts p
@@ -84,7 +65,7 @@ const postUpdate = async (postId, content) => {
 };
 
 // 게시글 삭제
-const postRemove = async (postId) => {
+const deletePost = async (postId) => {
   return await appDataSource.query(
     `DELETE FROM posts
     WHERE posts.id = ${postId};`
@@ -92,9 +73,9 @@ const postRemove = async (postId) => {
 };
 
 module.exports = {
-  posting,
-  postAll,
-  postUser,
-  postUpdate,
-  postRemove,
+  createPost,
+  getPosts,
+  getPostByUserId,
+  updatePost,
+  deletePost,
 };
