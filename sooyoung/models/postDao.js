@@ -19,7 +19,7 @@ const createPost = async (postImage, content, title, userId) => {
   }
 };
 
-const getPostlist = async () => {
+const getPosts = async () => {
   try {
     return await appDataSource.query(
       `SELECT 
@@ -39,7 +39,7 @@ const getPostlist = async () => {
   }
 };
 
-const getUserPost = async (userId) => {
+const getPostsByUserId = async (userId) => {
   try {
     const userWithPost = await appDataSource.query(
       `SELECT 
@@ -120,8 +120,8 @@ const removePost = async (postId, userId) => {
 
 module.exports = {
   createPost,
-  getPostlist,
-  getUserPost,
+  getPosts,
+  getPostsByUserId,
   updatePost,
   removePost,
 };

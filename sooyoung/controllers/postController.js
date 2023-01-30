@@ -16,9 +16,9 @@ const createPost = async (req, res) => {
   }
 };
 
-const getAllPosts = async (req, res) => {
+const getPosts = async (req, res) => {
   try {
-    const postlist = await postService.getAllPosts();
+    const postlist = await postService.getPosts();
 
     res.status(200).json({ data: postlist });
   } catch (err) {
@@ -27,7 +27,7 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-const getPostsOfUser = async (req, res) => {
+const getPostsByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -35,7 +35,7 @@ const getPostsOfUser = async (req, res) => {
       return res.status(400).json({ message: 'USERID_ERROR' });
     }
 
-    const userPostlist = await postService.getPostsOfUser(userId);
+    const userPostlist = await postService.getPostsByUserId(userId);
 
     res.status(200).json({ data: userPostlist });
   } catch (err) {
@@ -78,8 +78,8 @@ const deletePost = async (req, res) => {
 
 module.exports = {
   createPost,
-  getAllPosts,
-  getPostsOfUser,
+  getPosts,
+  getPostsByUserId,
   patchPost,
   deletePost,
 };

@@ -4,12 +4,12 @@ const createPost = async (postImage, content, title, userId) => {
   return await postDao.createPost(postImage, content, title, userId);
 };
 
-const getAllPosts = async () => {
-  return await postDao.getPostlist();
+const getPosts = async () => {
+  return await postDao.getPosts();
 };
 
-const getPostsOfUser = async (userId) => {
-  return await postDao.getUserPost(userId);
+const getPostsByUserId = async (userId) => {
+  return await postDao.getPostsByUserId(userId);
 };
 
 const patchPost = async (postId, content, userId) => {
@@ -22,8 +22,8 @@ const deletePost = async (postId, userId) => {
 
 module.exports = {
   createPost,
-  getAllPosts,
-  getPostsOfUser,
+  getPosts,
+  getPostsByUserId,
   patchPost,
   deletePost,
 };

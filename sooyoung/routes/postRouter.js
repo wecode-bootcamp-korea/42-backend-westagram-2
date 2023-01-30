@@ -4,8 +4,8 @@ const postController = require('../controllers/postController');
 const router = express.Router();
 
 router.post('', postController.createPost);
-router.get('/lists', postController.getAllPosts);
-router.get('/user/:userId', postController.getPostsOfUser);
+router.get('/lists', postController.getPosts);
+router.get('/user/:userId', postController.getPostsByUserId);
 router.patch('/:postId', postController.patchPost);
 router.delete('/:postId', postController.deletePost);
 
