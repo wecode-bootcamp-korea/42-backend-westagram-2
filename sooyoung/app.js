@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const routes = require('./routes');
+const { appDataSource } = require('./models/dbEnvironment');
 
 const app = express();
 
@@ -21,6 +22,15 @@ const PORT = process.env.PORT;
 
 const start = async () => {
   app.listen(PORT, () => console.log(`server is listening on ${PORT}`));
+  appDataSource
+    .initialize()
+    .then(() => {
+      console.log('Data Source has been initialized!');
+    })
+    .catch((err) => {
+      console.error('Data Source initialization Error', err);
+      appDataSource.destroy();
+    });
 };
 
 start();
