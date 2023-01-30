@@ -1,13 +1,13 @@
 const postService = require('../services/postService');
 
-const posting = async (req, res) => {
+const createPost = async (req, res) => {
   try {
     const { postImage, content, title, userId } = req.body;
 
     if (!postImage || !title || !userId) {
       return res.status(400).json({ message: 'KEY_ERROR' });
     }
-    await postService.posting(postImage, content, title, userId);
+    await postService.createPost(postImage, content, title, userId);
 
     res.status(201).json({ message: 'postCreated' });
   } catch (err) {
@@ -16,9 +16,9 @@ const posting = async (req, res) => {
   }
 };
 
-const postlist = async (req, res) => {
+const getAllPosts = async (req, res) => {
   try {
-    const postlist = await postService.postlist();
+    const postlist = await postService.getAllPosts();
 
     res.status(200).json({ data: postlist });
   } catch (err) {
@@ -27,7 +27,7 @@ const postlist = async (req, res) => {
   }
 };
 
-const userPostlist = async (req, res) => {
+const getPostsOfUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -35,7 +35,7 @@ const userPostlist = async (req, res) => {
       return res.status(400).json({ message: 'USERID_ERROR' });
     }
 
-    const userPostlist = await postService.userPostlist(userId);
+    const userPostlist = await postService.getPostsOfUser(userId);
 
     res.status(200).json({ data: userPostlist });
   } catch (err) {
@@ -77,9 +77,9 @@ const deletePost = async (req, res) => {
 };
 
 module.exports = {
-  posting,
-  postlist,
-  userPostlist,
+  createPost,
+  getAllPosts,
+  getPostsOfUser,
   patchPost,
   deletePost,
 };

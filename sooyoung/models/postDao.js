@@ -2,7 +2,7 @@ const { appDataSource } = require('./dbEnvironment');
 
 const createPost = async (postImage, content, title, userId) => {
   try {
-    const newPost = await appDataSource.query(
+    return await appDataSource.query(
       `INSERT INTO posts (
         post_image,
         content,
@@ -12,7 +12,6 @@ const createPost = async (postImage, content, title, userId) => {
       `,
       [postImage, content, title, userId]
     );
-    return newPost;
   } catch (err) {
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
@@ -22,7 +21,7 @@ const createPost = async (postImage, content, title, userId) => {
 
 const getPostlist = async () => {
   try {
-    const postList = await appDataSource.query(
+    return await appDataSource.query(
       `SELECT 
           users.id AS userId, 
           users.profile_image AS userProfileImage,
@@ -33,7 +32,6 @@ const getPostlist = async () => {
         INNER JOIN users ON users.id = posts.user_id;
       `
     );
-    return postList;
   } catch (err) {
     const error = new Error('INVALID_DATA');
     error.statusCode = 500;
@@ -107,14 +105,12 @@ const updatePost = async (postId, content, userId) => {
 
 const removePost = async (postId, userId) => {
   try {
-    const removePost = await appDataSource.query(
+    return await appDataSource.query(
       `DELETE FROM posts
       WHERE id = ? AND user_id = ? ;
       `,
       [postId, userId]
     );
-
-    return removePost;
   } catch (err) {
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
