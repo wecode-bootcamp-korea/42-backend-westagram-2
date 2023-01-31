@@ -59,20 +59,6 @@ const getPostByUserId = async (userId) => {
       [userId]
     );
 
-    // const data = await appDataSource.query(
-    //   `SELECT
-    //   u.id AS usersId,
-    //   u.profileImage AS userProfileImage,
-    //   p.user_id AS posingId,
-    //   p.post_image AS postingImageUrl,
-    //   p.content AS postingContent
-    //   FROM posts p INNER JOIN users u ON p.user_id = u.id
-    //   WHERE p.user_id = ?;`,
-    //   [userId]
-    // );
-
-    // return new Error("INVALID_USER_ID");
-
     return data;
   } catch (err) {
     const data = new Error("DATA_IS_NOT_VAILD");
