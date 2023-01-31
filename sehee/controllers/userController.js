@@ -1,9 +1,18 @@
 const userService = require("../services/userService");
 
 const signUp = async (req, res) => {
-  const { name, password, email, phoneNumber, profileImage } = req.body;
-  await userService.signUp(name, password, email, phoneNumber, profileImage);
-  return res.status(201).json({ message: "userCreated" });
+  try {
+    const { name, email, password, phoneNumber, profileImage } = req.body;
+
+    if (!name || !email || !password || !profileImage || !phoneNumber) {
+      return res.status(400).json({ message: "KEY_ERROR" });
+    }
+    await userService.signUp(name, email, password, phoneNumber, profileImage);
+    return res.status(201).json({ message: "SIGNUP_SUCCESS" });
+  } catch (err) {
+    console.log(err);
+    return res.status(err.statusCode || 500).json({ message: err.message });
+  }
 };
 
 module.exports = {

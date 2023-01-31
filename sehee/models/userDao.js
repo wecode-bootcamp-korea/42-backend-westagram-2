@@ -1,18 +1,18 @@
 const { appDataSource } = require("./appDataSource");
 
 // 유저회원가입
-const signUp = async (name, password, email, phoneNumber, profileImage) => {
+const signUp = async (name, email, password, phoneNumber, profileImage) => {
   try {
     return await appDataSource.query(
       `INSERT INTO users(
-    name,
-    password,
-    email,
-    phoneNumber,
-    profileImage
+        name,
+        email,
+        password,
+        phoneNumber,
+        profileImage
     ) VALUES (?, ?, ?, ?, ?);
   `,
-      [name, password, email, phoneNumber, profileImage]
+      [name, email, password, phoneNumber, profileImage]
     );
   } catch (err) {
     const error = new Error("INVALID_DATA_INPUT");
@@ -21,6 +21,20 @@ const signUp = async (name, password, email, phoneNumber, profileImage) => {
   }
 };
 
+const checkIfUserExistsOrNot = async (userId) => {
+  const user = await appDataSource.query(
+    `SELECT EXISTS(
+      SELECT * FROM
+      users id 
+      WHERE
+      id = ${userId}
+    );`
+  );
+  const userExists = Object.values(user[0])[0];
+  return userExists;
+};
+
 module.exports = {
   signUp,
+  checkIfUserExistsOrNot,
 };
