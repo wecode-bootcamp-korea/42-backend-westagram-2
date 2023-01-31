@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const userDao = require('../models/userDao');
 
 const signUp = async (username, email, profileImage, password) => {
@@ -10,9 +12,36 @@ const signUp = async (username, email, profileImage, password) => {
     err.statusCode = 400;
     throw err;
   }
-  return await userDao.createUser(username, email, profileImage, password);
+
+  const COST_FACTOR = 12;
+  const hashedPassword = await bcrypt.hash(password, COST_FACTOR);
+
+  return await userDao.createUser(
+    username,
+    email,
+    profileImage,
+    hashedPassword
+  );
+};
+
+const signIn = async (email, password) => {
+  const hashedPassword = await userDao.getHashedPassword(email);
+  const isMatchPassword = await bcrypt.compare(password, hashedPassword);
+
+  if (!isMatchPassword) {
+    const err = new Error('PASSWORD_IS_NOT_MATCHED');
+    err.statusCode = 401;
+    throw err;
+  }
+
+  const getUserId = await userDao.getUserId(email);
+  const secretKey = process.env.SECRET_KEY;
+  const jwtToken = jwt.sign({ userId: getUserId }, secretKey);
+
+  return jwtToken;
 };
 
 module.exports = {
   signUp,
+  signIn,
 };
