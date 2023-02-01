@@ -40,14 +40,16 @@ const getHashedPassword = async (email) => {
 
 const isUserIdExist = async (userId) => {
   try {
-    const [userIdExist] = await appDataSource.query(
-      `SELECT id
+    const [result] = await appDataSource.query(
+      `SELECT EXISTS (
+        SELECT id
         FROM users
-        WHERE users.id = ?;  
+        WHERE users.id = ?
+      ) as registerd
       `,
       [userId]
     );
-    return userIdExist.id;
+    return parseInt(result.registerd);
   } catch (err) {
     console.log(err);
     const error = new Error('INVALID_DATA_INPUT');

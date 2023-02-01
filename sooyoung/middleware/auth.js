@@ -20,7 +20,7 @@ const validateToken = async (req, res, next) => {
       throw error;
     }
 
-    req.user = user;
+    req.user = decoded.userId;
     next();
   } catch (err) {
     console.error(err);

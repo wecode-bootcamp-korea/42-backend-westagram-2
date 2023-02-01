@@ -7,7 +7,6 @@ const createPost = async (req, res) => {
     if (!postImage || !title) {
       return res.status(400).json({ message: 'KEY_ERROR' });
     }
-    console.log(req.user);
     await postService.createPost(postImage, content, title, req.user);
 
     res.status(201).json({ message: 'postCreated' });
