@@ -13,6 +13,7 @@ const createPost = async (postImage, content, title, userId) => {
       [postImage, content, title, userId]
     );
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
     throw error;
@@ -41,7 +42,7 @@ const getPosts = async () => {
 
 const getPostsByUserId = async (userId) => {
   try {
-    const userWithPost = await appDataSource.query(
+    const [userWithPost] = await appDataSource.query(
       `SELECT 
           id AS userId, 
           profile_image AS userProfileImage
@@ -62,9 +63,10 @@ const getPostsByUserId = async (userId) => {
       [userId]
     );
 
-    userWithPost[0].posting = postsOfUser;
-    return userWithPost[0];
+    userWithPost.posting = postsOfUser;
+    return userWithPost;
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
     throw error;
@@ -97,6 +99,7 @@ const updatePost = async (postId, content, userId) => {
 
     return updatedPost;
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
     throw error;
@@ -105,16 +108,21 @@ const updatePost = async (postId, content, userId) => {
 
 const removePost = async (postId, userId) => {
   try {
-    return await appDataSource.query(
+    const removePost = await appDataSource.query(
       `DELETE FROM posts
       WHERE id = ? AND user_id = ? ;
       `,
       [postId, userId]
     );
+
+    if (!removePost.affectedRows) {
+      throw new Error('NO_POST_FOUND');
+    }
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
-    throw error;
+    throw err;
   }
 };
 

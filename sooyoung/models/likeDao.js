@@ -12,6 +12,7 @@ const makeLike = async (postId, userId) => {
       [userId, postId]
     );
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
     throw error;
