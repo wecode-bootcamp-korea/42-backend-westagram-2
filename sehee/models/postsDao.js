@@ -1,7 +1,6 @@
 const { appDataSource } = require("./appDataSource");
 
-//게시글 등록
-const createPost = async (title, content, post_image, user_id) => {
+const createPost = async (title, content, postImage, userId) => {
   try {
     const data = await appDataSource.query(
       `INSERT INTO posts(
@@ -11,7 +10,7 @@ const createPost = async (title, content, post_image, user_id) => {
       user_id
     ) VALUES (?, ?, ?, ?);
     `,
-      [title, content, post_image, user_id]
+      [title, content, postImage, userId]
     );
     return data;
   } catch (err) {
@@ -21,7 +20,6 @@ const createPost = async (title, content, post_image, user_id) => {
   }
 };
 
-// 게시글 조회
 const getPosts = async () => {
   try {
     const data = await appDataSource.query(
@@ -42,7 +40,6 @@ const getPosts = async () => {
   }
 };
 
-// 유저 게시글 조회
 const getPostByUserId = async (userId) => {
   try {
     const data = await appDataSource.query(
@@ -50,12 +47,16 @@ const getPostByUserId = async (userId) => {
         u.id AS userId,
         u.profileImage AS userProfileImage,
         JSON_ARRAYAGG(
-        JSON_OBJECT('postingId', p.id,
-        'postingImageUrl', p.post_image, 'postingContent', p.content))
-          AS postings
+        JSON_OBJECT(
+        'postingId', p.id,
+        'postingImageUrl', p.post_image, 
+        'postingContent', p.content
+        )
+        ) AS postings
         FROM users u
         INNER JOIN posts p
-        ON u.id=p.user_id WHERE u.id= ?;`,
+        ON u.id=p.user_id 
+        WHERE u.id= ?;`,
       [userId]
     );
 
@@ -67,7 +68,6 @@ const getPostByUserId = async (userId) => {
   }
 };
 
-// 게시글 수정
 const updatePost = async (postId, content) => {
   try {
     await appDataSource.query(
@@ -99,7 +99,6 @@ const updatePost = async (postId, content) => {
   }
 };
 
-// 게시글 삭제
 const deletePost = async (postId) => {
   try {
     const data = await appDataSource.query(
@@ -122,5 +121,4 @@ module.exports = {
   getPostByUserId,
   updatePost,
   deletePost,
-  // checkIfUserExistsOrNot,
 };
