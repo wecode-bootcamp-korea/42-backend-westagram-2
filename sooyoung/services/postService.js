@@ -1,4 +1,5 @@
 const postDao = require('../models/postDao');
+const userDao = require('../models/userDao');
 
 const createPost = async (postImage, content, title, userId) => {
   return await postDao.createPost(postImage, content, title, userId);
@@ -9,6 +10,12 @@ const getPosts = async () => {
 };
 
 const getPostsByUserId = async (userId) => {
+  const isUserIdExist = await userDao.isUserIdExist(userId);
+
+  if (!isUserIdExist) {
+    throw new Error('NO_USER_FOUND');
+  }
+
   return await postDao.getPostsByUserId(userId);
 };
 

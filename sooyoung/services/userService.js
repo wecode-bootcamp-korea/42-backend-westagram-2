@@ -3,6 +3,11 @@ const jwt = require('jsonwebtoken');
 const userDao = require('../models/userDao');
 
 const signUp = async (username, email, profileImage, password) => {
+  const getUserId = await userDao.getUserIdByEmail(email);
+  if (getUserId) {
+    throw new Error('EMAIL_IS_ALREADY_IN_USE');
+  }
+
   const PASSWORD_REGEX =
     '^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})';
   const pwValidation = new RegExp(PASSWORD_REGEX);
@@ -34,7 +39,7 @@ const signIn = async (email, password) => {
     throw err;
   }
 
-  const getUserId = await userDao.getUserId(email);
+  const getUserId = await userDao.getUserIdByEmail(email);
   const secretKey = process.env.SECRET_KEY;
   const jwtToken = jwt.sign({ userId: getUserId }, secretKey);
 

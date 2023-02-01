@@ -13,6 +13,7 @@ const createUser = async (username, email, profileImage, password) => {
       [username, email, profileImage, password]
     );
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
     throw error;
@@ -30,13 +31,32 @@ const getHashedPassword = async (email) => {
     );
     return hashedPassword.password;
   } catch (err) {
+    console.log(err);
     const error = new Error('INVALID_EMAIL_INPUT');
     error.statusCode = 500;
     throw error;
   }
 };
 
-const getUserId = async (email) => {
+const isUserIdExist = async (userId) => {
+  try {
+    const [userIdExist] = await appDataSource.query(
+      `SELECT id
+        FROM users
+        WHERE users.id = ?;  
+      `,
+      [userId]
+    );
+    return userIdExist;
+  } catch (err) {
+    console.log(err);
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 500;
+    throw err;
+  }
+};
+
+const getUserIdByEmail = async (email) => {
   try {
     const [userId] = await appDataSource.query(
       `SELECT id 
@@ -47,13 +67,16 @@ const getUserId = async (email) => {
     );
     return userId.id;
   } catch (err) {
+    console.log(err);
     const error = new Error('FAIL_TO_GET_USERID');
     error.statusCode = 500;
+    throw err;
   }
 };
 
 module.exports = {
   createUser,
   getHashedPassword,
-  getUserId,
+  getUserIdByEmail,
+  isUserIdExist,
 };
