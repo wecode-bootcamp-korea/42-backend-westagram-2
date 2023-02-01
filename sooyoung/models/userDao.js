@@ -47,7 +47,7 @@ const isUserIdExist = async (userId) => {
       `,
       [userId]
     );
-    return userIdExist;
+    return userIdExist.id;
   } catch (err) {
     console.log(err);
     const error = new Error('INVALID_DATA_INPUT');
@@ -65,7 +65,7 @@ const getUserIdByEmail = async (email) => {
       `,
       [email]
     );
-    return userId.id;
+    if (userId) return userId.id;
   } catch (err) {
     console.log(err);
     const error = new Error('FAIL_TO_GET_USERID');

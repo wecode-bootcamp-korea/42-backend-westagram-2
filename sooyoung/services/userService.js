@@ -21,12 +21,7 @@ const signUp = async (username, email, profileImage, password) => {
   const COST_FACTOR = 12;
   const hashedPassword = await bcrypt.hash(password, COST_FACTOR);
 
-  return await userDao.createUser(
-    username,
-    email,
-    profileImage,
-    hashedPassword
-  );
+  return userDao.createUser(username, email, profileImage, hashedPassword);
 };
 
 const signIn = async (email, password) => {
@@ -39,11 +34,8 @@ const signIn = async (email, password) => {
     throw err;
   }
 
-  const getUserId = await userDao.getUserIdByEmail(email);
-  const secretKey = process.env.SECRET_KEY;
-  const jwtToken = jwt.sign({ userId: getUserId }, secretKey);
-
-  return jwtToken;
+  const userId = await userDao.getUserIdByEmail(email);
+  return jwt.sign({ userId }, process.env.SECRET_KEY);
 };
 
 module.exports = {
