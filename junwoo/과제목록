@@ -146,3 +146,44 @@ const 문자를반환하는함수를호출하는함수 = () => {
   const string = 문자를반환하는함수(); // == "문자"
   return string + "열"; // "문자열"
 };
+
+//userService
+const userDao = require("../models/userDao");
+const bcrypt = require("bcrypt");
+
+const signUp = async (name, email, password, profileImage) => {
+  //password validation usign REGEXP
+  const pwValidation = new RegExp(
+    "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})"
+  );
+  if (!pwValidation.test(password)) {
+    const err = new Error("PASSWORD_IS_NOT_VALID");
+    err.statusCode = 400;
+    throw err;
+  }
+  const saltRounds = 12;
+  let hashedPassword = "";
+  const makeHash = async (password, saltRounds) => {
+    return await bcrypt.hash(password, saltRounds);
+  };
+  hashedPassword = await makeHash(password, saltRounds);
+
+  const createUser = await userDao.createUser(
+    name,
+    email,
+    hashedPassword,
+    profileImage
+  );
+
+  return createUser;
+};
+
+const signIn = async (id, password) => {
+  const checkHash = async (password, hashedPassword) => {
+    return await bcrypt.compare(password, hashedPassword)
+  }
+}
+
+module.exports = {
+  signUp,
+};

@@ -1,6 +1,6 @@
 const { appDataSource } = require("./dbconfig.js");
 
-const createLike = async (userId, postId) => {
+const creatingLike = async (userId, postId) => {
   return await appDataSource.query(
     `INSERT INTO likes(
       user_id,
@@ -13,5 +13,5 @@ const createLike = async (userId, postId) => {
 };
 
 module.exports = {
-  createLike,
+  creatingLike,
 };

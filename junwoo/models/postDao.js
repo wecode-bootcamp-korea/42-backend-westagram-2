@@ -31,7 +31,8 @@ const usersPosting = async (userId) => {
       p.id AS postingId,
       p.image_url AS postingImageUrl,
       p.content AS postingContent
-    FROM users u INNER JOIN posts p on u.id = ${userId}`
+    FROM users u INNER JOIN posts p on u.id = ?`,
+    [userId]
   );
 };
 
@@ -43,7 +44,8 @@ const usersPosting2 = async (userId) => {
       u.profileImage AS userProfileImage,
       JSON_ARRAYAGG(JSON_OBJECT('postingId',p.id,'postingImgageUrl',p.image_url,'postingContent',p.content)) AS postings 
     FROM users u
-    INNER JOIN posts p ON u.id = ${userId} WHERE u.id = p.user_id GROUP BY p.user_id`
+    INNER JOIN posts p ON u.id = ? WHERE u.id = p.user_id GROUP BY p.user_id`,
+    [userId]
   );
 };
 
@@ -52,12 +54,11 @@ const postModifing = async (userId, postId, content) => {
     `UPDATE posts p, users u
   SET
     p.content = ?
-    WHERE p.id = ${postId} AND u.id = ${userId}
+    WHERE p.id = ? AND u.id = ?
   `,
-    [content]
+    [content, postId, userId]
   );
 
-  console.log("업데이트:", update);
   const select = await appDataSource.query(
     `SELECT
       u.id AS userID,
@@ -66,18 +67,19 @@ const postModifing = async (userId, postId, content) => {
       p.title AS postingTitle,
       p.content AS postingContent
       FROM users u
-      INNER JOIN posts p ON u.id = ${userId} AND p.id = ${postId}
-    `
+      INNER JOIN posts p ON u.id = ? AND p.id = ?
+    `,
+    [userId, postId]
   );
-  console.log("셀렉트:", select);
   return select;
 };
 
 const postDeleting = async (postId) => {
   return await appDataSource.query(
     `DELETE FROM posts
-    WHERE posts.id = ${postId}
-    `
+    WHERE posts.id = ?
+    `,
+    [postId]
   );
 };
 
