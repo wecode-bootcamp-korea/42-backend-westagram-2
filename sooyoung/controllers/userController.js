@@ -1,37 +1,32 @@
 const userService = require('../services/userService');
+const { checkError } = require('../middleware/errorHandler');
 
-const signUp = async (req, res) => {
-  try {
-    const { username, email, profileImage, password } = req.body;
+const signUp = checkError(async (req, res) => {
+  const { username, email, profileImage, password } = req.body;
 
-    if (!username || !email || !profileImage || !password) {
-      return res.status(400).json({ message: 'KEY_ERROR' });
-    }
-
-    await userService.signUp(username, email, profileImage, password);
-
-    res.status(201).json({ message: 'SIGNUP_SUCCESS' });
-  } catch (err) {
-    console.log(err);
-    return res.status(err.statusCode || 500).json({ message: err.message });
+  if (!username || !email || !password) {
+    const err = new Error('KEY_ERROR');
+    err.statusCode = 400;
+    throw err;
   }
-};
 
-const signIn = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+  await userService.signUp(username, email, profileImage, password);
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'KEY_ERROR' });
-    }
+  res.status(201).json({ message: 'SIGNUP_SUCCESS' });
+});
 
-    const accessToken = await userService.signIn(email, password);
-    return res.status(200).json({ accessToken });
-  } catch (err) {
-    console.log(err);
-    return res.status(err.statusCode || 500).json({ message: err.message });
+const signIn = checkError(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    const err = new Error('KEY_ERROR');
+    err.statusCode = 400;
+    throw err;
   }
-};
+
+  const accessToken = await userService.signIn(email, password);
+  return res.status(200).json({ accessToken });
+});
 
 module.exports = {
   signUp,

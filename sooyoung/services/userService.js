@@ -4,7 +4,6 @@ const userDao = require('../models/userDao');
 
 const signUp = async (username, email, profileImage, password) => {
   const user = await userDao.getUserByEmail(email);
-  console.log(user);
   if (user) {
     throw new Error('EMAIL_IS_ALREADY_IN_USE');
   }
