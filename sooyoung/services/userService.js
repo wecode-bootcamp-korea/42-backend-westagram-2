@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 const userDao = require('../models/userDao');
 
 const signUp = async (username, email, profileImage, password) => {
-  const getUserId = await userDao.getUserIdByEmail(email);
-  if (getUserId) {
+  const user = await userDao.getUserByEmail(email);
+  console.log(user);
+  if (user) {
     throw new Error('EMAIL_IS_ALREADY_IN_USE');
   }
 
@@ -25,7 +26,14 @@ const signUp = async (username, email, profileImage, password) => {
 };
 
 const signIn = async (email, password) => {
-  const hashedPassword = await userDao.getHashedPassword(email);
+  const user = await userDao.getUserByEmail(email);
+
+  if (!user) {
+    const err = new Error('USER_EMAIL_DOES_NOT_EXIST');
+    err.statusCode = 401;
+    throw err;
+  }
+  const hashedPassword = user.password;
   const isMatchPassword = await bcrypt.compare(password, hashedPassword);
 
   if (!isMatchPassword) {
@@ -34,7 +42,7 @@ const signIn = async (email, password) => {
     throw err;
   }
 
-  const userId = await userDao.getUserIdByEmail(email);
+  const userId = user.id;
   return jwt.sign({ userId }, process.env.SECRET_KEY);
 };
 
