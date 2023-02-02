@@ -7,7 +7,7 @@ const createUser = async (name, email, password, profileImage) => {
         name,
         email,
         password,
-        profileImage
+        profileIamge
       ) VALUES (?,
         ?,
         ?,
