@@ -7,9 +7,8 @@ const makeHash = async (password, saltRounds) => {
   return await bcrypt.hash(password, saltRounds);
 };
 
-const main = async () => {
+const hashPassword = async () => {
   const hashedPassword = await makeHash(password, saltRounds);
-  console.log(hashedPassword);
 };
 
-main();
+hashPassword();
