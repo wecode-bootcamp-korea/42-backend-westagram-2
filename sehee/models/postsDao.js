@@ -68,7 +68,7 @@ const getPostByUserId = async (userId) => {
   }
 };
 
-const updatePost = async (postId, content) => {
+const updatePost = async (postId, userId, content) => {
   try {
     await appDataSource.query(
       `UPDATE
@@ -86,7 +86,7 @@ const updatePost = async (postId, content) => {
         p.content AS postingContent
       FROM posts p
       INNER JOIN users u
-      ON u.id=p.user_id
+      ON p.user_id = ${userId}
       WHERE p.id = ${postId}`
     );
     if (!data.affectedRows) {

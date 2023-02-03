@@ -3,8 +3,10 @@ const postsService = require("../services/postsService");
 const createPost = async (req, res) => {
   try {
     const { title, content, postImage, userId } = req.body;
-    if (!title || !content || !postImage || !userId) {
-      return res.status(400).json({ message: "KEY_ERROR" });
+    if (!title || !content || !userId) {
+      const error = new Error("KEY_ERROR");
+      err.statusCode = 400;
+      throw error;
     }
     await postsService.createPost(title, content, postImage, userId);
     return res.status(201).json({ message: "postCreated" });
@@ -40,12 +42,12 @@ const getPostByUserId = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    const { postId } = req.params;
+    const { postId, userId } = req.params;
     const { content } = req.body;
-    if (!postId || !content) {
+    if (!postId || !userId || !content) {
       return res.status(400).json({ message: "INVALID_DATA_INPUT" });
     }
-    await postsService.updatePost(postId, content);
+    await postsService.updatePost(postId, userId, content);
     return res.status(200).json({ data: "updatePost" });
   } catch (err) {
     console.error(err);
