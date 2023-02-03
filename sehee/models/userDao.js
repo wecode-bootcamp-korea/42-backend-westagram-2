@@ -28,10 +28,14 @@ const checkIfUserExistsOrNot = async (userId) => {
       id
       FROM users 
       WHERE
-      id = ${userId}
-    );`
+      id = ?
+    );`,
+      [userId]
     );
     const userExists = Object.values(user[0])[0];
+    if (!userExists) {
+      throw new Error("INVALID_USER");
+    }
     return userExists;
   } catch (err) {
     const error = new Error("INVALID_DATA");
@@ -40,16 +44,25 @@ const checkIfUserExistsOrNot = async (userId) => {
   }
 };
 
-const getUserInformation = async (email) => {
-  const [result] = await appDataSource.query(
-    `SELECT * FROM users
+const getUserInformation = async (userId) => {
+  try {
+    const [result] = await appDataSource.query(
+      `SELECT * FROM users
     WHERE 
-    email = ?;`,
-    [email]
-  );
-  return result;
+    id = ?;`,
+      [userId]
+    );
+    if (!result) {
+      const err = new Error("INVALID_USER");
+      throw err;
+    }
+    return result;
+  } catch (err) {
+    const error = new Error("INVALID_DATA");
+    err.statusCode = 400;
+    throw err;
+  }
 };
-
 module.exports = {
   signUp,
   checkIfUserExistsOrNot,

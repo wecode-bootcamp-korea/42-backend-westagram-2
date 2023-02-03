@@ -45,10 +45,10 @@ const logIn = async (email, password) => {
     if (!matchPassword) {
       throw new Error("PASSWORD_IS_WRONG");
     }
+    const userId = user.id;
+    const payLoad = { userId: userId };
 
-    const payLoad = { email: email };
-    const secretKey = "mySecretKey";
-    const jwtToken = jwt.sign(payLoad, secretKey);
+    const jwtToken = jwt.sign(payLoad, process.env.SECRETKEY);
     return jwtToken;
   } catch (err) {
     const error = new Error("PASSWORD_IS_NOT_VALID");

@@ -68,15 +68,19 @@ const getPostByUserId = async (userId) => {
   }
 };
 
-const updatePost = async (postId, content) => {
+const updatePost = async (content, postId) => {
   try {
-    await appDataSource.query(
+    const isUpdated = await appDataSource.query(
       `UPDATE
     posts p
     SET p.content = ?
-    WHERE p.id = ${postId};`,
-      [content]
+    WHERE p.id = ?;`,
+      [content, postId]
     );
+
+    if (!isUpdated.affectedRows) {
+      throw new Error("INVALID_DATA_INPUT");
+    }
     const data = await appDataSource.query(
       `SELECT
         u.id AS userId, 
@@ -86,12 +90,11 @@ const updatePost = async (postId, content) => {
         p.content AS postingContent
       FROM posts p
       INNER JOIN users u
-      ON u.id=p.user_id
-      WHERE p.id = ${postId}`
+      ON p.user_id = u.id
+      WHERE p.id = ?;`,
+      [postId]
     );
-    if (!data.affectedRows) {
-      throw new Error("INVALID_DATA_INPUT");
-    }
+    return data;
   } catch (err) {
     const data = new Error("DATA_IS_NOT_VAILD");
     err.statusCode = 500;

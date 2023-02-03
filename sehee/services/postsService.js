@@ -16,7 +16,7 @@ const getPosts = async () => {
     const posts = await postsDao.getPosts();
     return posts;
   } catch (err) {
-    const posts = new Error("INVALID_DATA");
+    const error = new Error("INVALID_DATA");
     err.statusCode = 500;
     throw err;
   }
@@ -39,9 +39,9 @@ const getPostByUserId = async (userId) => {
   }
 };
 
-const updatePost = async (postId, content) => {
+const updatePost = async (content, postId) => {
   try {
-    return await postsDao.updatePost(postId, content);
+    await postsDao.updatePost(content, postId);
   } catch (err) {
     const error = new Error("INVALID_DATA_INPUT");
     err.statusCode = 400;
