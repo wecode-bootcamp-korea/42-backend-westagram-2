@@ -15,7 +15,6 @@ const validateToken = async (req, res, next) => {
 
     const tokenId = decoded.userId;
     req.user = await userDao.getUserInformation(tokenId);
-
     return next();
   } catch (err) {
     err.statusCode = 500 || statusCode;

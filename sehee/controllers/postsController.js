@@ -42,12 +42,12 @@ const getPostByUserId = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    const { postId, userId } = req.params;
+    const { postId } = req.params;
     const { content } = req.body;
-    if (!postId || !userId || !content) {
+    if (!postId || !content) {
       return res.status(400).json({ message: "INVALID_DATA_INPUT" });
     }
-    await postsService.updatePost(postId, userId, content);
+    await postsService.updatePost(content, postId);
     return res.status(200).json({ data: "updatePost" });
   } catch (err) {
     console.error(err);
