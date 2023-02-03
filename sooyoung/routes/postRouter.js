@@ -7,8 +7,8 @@ const router = express.Router();
 router.post('', validateToken, postController.createPost);
 router.get('/lists', postController.getPosts);
 router.get('/user/:userId', postController.getPostsByUserId);
-router.patch('/:postId', postController.patchPost);
-router.delete('/:postId', postController.deletePost);
+router.patch('/:postId', validateToken, postController.patchPost);
+router.delete('/:postId', validateToken, postController.deletePost);
 
 module.exports = {
   router,

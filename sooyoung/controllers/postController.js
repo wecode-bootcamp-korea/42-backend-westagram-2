@@ -34,22 +34,21 @@ const getPostsByUserId = checkError(async (req, res) => {
 
 const patchPost = checkError(async (req, res) => {
   const { postId } = req.params;
-  const { content, userId } = req.body;
+  const { content } = req.body;
 
-  if (!postId || !content || !userId) {
+  if (!postId || !content) {
     return res.status(400).json({ message: 'KEY_ERROR' });
   }
 
-  const patchPost = await postService.patchPost(postId, content, userId);
+  const patchPost = await postService.patchPost(postId, content, req.user);
 
   res.status(200).json({ data: patchPost });
 });
 
 const deletePost = checkError(async (req, res) => {
   const { postId } = req.params;
-  const { userId } = req.body;
 
-  await postService.deletePost(postId, userId);
+  await postService.deletePost(postId, req.user);
 
   res.status(200).json({ message: 'postingDeleted' });
 });
